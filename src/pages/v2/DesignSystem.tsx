@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from '../../components-v2/common/Button';
 import Card from '../../components-v2/common/Card';
 import Input from '../../components-v2/common/Input';
-import '../../styles/v2/base.css';
+
 
 const DesignSystem: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
