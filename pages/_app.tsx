@@ -2,7 +2,7 @@ import React from 'react'
 import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import '../src/index.css'
-import '../src/styles/v2/base.css'
+
 
 // Dynamically import the App component with SSR disabled
 const AppWithRouter = dynamic(
