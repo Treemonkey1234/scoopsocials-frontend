@@ -401,9 +401,9 @@ export default function Events() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-background)' }}>
+    <div className="h-screen flex flex-col" style={{ backgroundColor: 'var(--color-background)' }}>
       {/* Header */}
-      <div className="bg-primary text-white p-lg shadow-lg sticky top-0 z-30">
+      <div className="bg-primary text-white p-lg shadow-lg flex-shrink-0">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <h1 className="text-h1 font-bold text-white">Events</h1>
           <PlusButton onAction={handlePlusAction} />
@@ -486,7 +486,7 @@ export default function Events() {
                 </div>
 
                 {/* Full-screen Map - Now properly fills the space */}
-                <div className="absolute inset-0">
+                <div className="w-full h-full">
                   <MapComponent
                     ref={mapRef}
                     initialCenter={[-74.006, 40.7128]} // New York City
