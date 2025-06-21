@@ -396,8 +396,34 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
-      <div className="bg-primary text-white p-lg shadow-lg">
+    <div className="min-h-screen relative" style={{ backgroundColor: 'var(--color-background)' }}>
+      {/* Waffle Cone Background Pattern */}
+      <div 
+        className="fixed inset-0 opacity-10 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(45deg, #d4a574 25%, transparent 25%), 
+            linear-gradient(-45deg, #d4a574 25%, transparent 25%), 
+            linear-gradient(45deg, transparent 75%, #d4a574 75%), 
+            linear-gradient(-45deg, transparent 75%, #d4a574 75%)
+          `,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
+        }}
+      />
+      
+      {/* Additional waffle texture overlay */}
+      <div 
+        className="fixed inset-0 opacity-5 pointer-events-none"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at 50% 50%, #8B4513 1px, transparent 1px)
+          `,
+          backgroundSize: '8px 8px'
+        }}
+      />
+
+      <div className="bg-primary text-white p-lg shadow-lg relative z-10">
         <div className="flex items-center justify-between mb-md">
             <h1 className="text-5xl font-extrabold text-white">Profile</h1>
             <PlusButton onAction={handlePlusAction} />
@@ -416,10 +442,10 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="p-lg -mt-lg">
+      <div className="p-lg -mt-lg relative z-10">
         <div className="max-w-2xl mx-auto space-y-xl">
           {/* Profile Header */}
-          <Card className="p-xl text-center relative overflow-hidden bg-white">
+          <Card className="p-xl text-center relative overflow-hidden bg-white/90 backdrop-blur-sm">
             <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full -mr-10 -mt-10"></div>
             <div className="relative z-10">
                 <div className="w-24 h-24 mx-auto rounded-full border-4 border-primary/30 shadow-lg overflow-hidden">
@@ -436,12 +462,12 @@ export default function Profile() {
           </Card>
 
           {/* Bio Card */}
-          <Card className="p-xl text-center bg-white">
+          <Card className="p-xl text-center bg-white/90 backdrop-blur-sm">
             <p className="text-body1 text-primary">{userData.bio}</p>
           </Card>
 
           {/* Flavors Section */}
-          <div className="bg-white rounded-lg p-lg">
+          <div className="bg-white/90 backdrop-blur-sm rounded-lg p-lg">
             <div className="flex justify-between items-center mb-xl">
                 <h3 className="text-h3 font-bold text-primary text-center">Flavors</h3>
                 <Button variant="outline" size="small" onClick={handleViewFlavors}>View</Button>
@@ -457,7 +483,7 @@ export default function Profile() {
           </div>
 
           {/* Social Connections */}
-          <Card className="p-xl bg-white">
+          <Card className="p-xl bg-white/90 backdrop-blur-sm">
             <div className="flex justify-between items-center mb-xl">
                 <h3 className="text-h3 font-bold text-primary">Socials</h3>
                 <Button variant="outline" size="small" onClick={handleViewAllSocials}>View all</Button>
@@ -486,7 +512,7 @@ export default function Profile() {
           </Card>
 
           {/* Tabs */}
-          <div className="bg-white rounded-lg">
+          <div className="bg-white/90 backdrop-blur-sm rounded-lg">
             <div className="border-b border-gray-200">
               <div className="flex justify-around">
                 {tabList.map(tab => (

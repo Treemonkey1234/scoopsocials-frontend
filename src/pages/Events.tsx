@@ -401,7 +401,7 @@ export default function Events() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-background)' }}>
       {/* Header */}
       <div className="bg-primary text-white p-lg shadow-lg sticky top-0 z-30">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
@@ -431,11 +431,11 @@ export default function Events() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-2xl mx-auto p-lg">
+      {/* Main Content - Flex grow to fill space between header and footer */}
+      <div className="flex-1 flex flex-col">
         {/* Loading State */}
         {loading && (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-12 flex-1">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
               <p className="text-secondary">Loading events...</p>
@@ -445,17 +445,19 @@ export default function Events() {
 
         {/* Error State */}
         {error && !loading && (
-          <div className="text-center py-12">
-            <div className="text-red-500 mb-4">
-              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
+          <div className="text-center py-12 flex-1 flex items-center justify-center">
+            <div>
+              <div className="text-red-500 mb-4">
+                <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <p className="text-red-600 font-medium mb-2">Failed to load events</p>
+              <p className="text-secondary mb-4">{error}</p>
+              <Button onClick={fetchEvents} variant="outline">
+                Try Again
+              </Button>
             </div>
-            <p className="text-red-600 font-medium mb-2">Failed to load events</p>
-            <p className="text-secondary mb-4">{error}</p>
-            <Button onClick={fetchEvents} variant="outline">
-              Try Again
-            </Button>
           </div>
         )}
 
@@ -464,7 +466,7 @@ export default function Events() {
           <>
             {/* RESTORED: Discover Tab with Map and Sliding Panels */}
             {activeTab === "Discover" && (
-              <div className="h-[calc(100vh-12rem-5rem)] relative">
+              <div className="flex-1 relative">
                 {/* Sliding Panels */}
                 {filterPanels.map((_, index) => renderSlidingPanel(index))}
 
@@ -483,7 +485,7 @@ export default function Events() {
                   </div>
                 </div>
 
-                {/* Full-screen Map */}
+                {/* Full-screen Map - Now properly fills the space */}
                 <div className="absolute inset-0">
                   <MapComponent
                     ref={mapRef}
@@ -514,28 +516,32 @@ export default function Events() {
               </div>
             )}
 
-            {/* Upcoming and Past tabs - List view */}
+            {/* Upcoming and Past tabs - List view with proper scrolling */}
             {(activeTab === "Upcoming" || activeTab === "Past") && (
-              <div className="space-y-md">
-                {filteredEvents.map(renderEventCard)}
-                
-                {/* Empty state for filtered events */}
-                {filteredEvents.length === 0 && (
-                  <div className="text-center py-12">
-                    <div className="text-gray-400 mb-4">
-                      <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <p className="text-gray-500">No {activeTab.toLowerCase()} events</p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      {activeTab === "Upcoming" 
-                        ? "Check back later for new events" 
-                        : "No past events to display"
-                      }
-                    </p>
+              <div className="flex-1 overflow-y-auto">
+                <div className="max-w-2xl mx-auto p-lg">
+                  <div className="space-y-md">
+                    {filteredEvents.map(renderEventCard)}
+                    
+                    {/* Empty state for filtered events */}
+                    {filteredEvents.length === 0 && (
+                      <div className="text-center py-12">
+                        <div className="text-gray-400 mb-4">
+                          <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <p className="text-gray-500">No {activeTab.toLowerCase()} events</p>
+                        <p className="text-sm text-gray-400 mt-1">
+                          {activeTab === "Upcoming" 
+                            ? "Check back later for new events" 
+                            : "No past events to display"
+                          }
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             )}
           </>
