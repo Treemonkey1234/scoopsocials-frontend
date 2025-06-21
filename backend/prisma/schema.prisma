@@ -1,0 +1,528 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String      @id @default(cuid())
+  email             String?     @unique
+  phone             String      @unique
+  phoneVerified     Boolean     @default(false)
+  phoneVerifiedAt   DateTime?
+  name              String
+  username          String      @unique
+  bio               String?
+  avatar            String?
+  location          Json?       // { city, state, country }
+  occupation        String?
+  interests         String[]
+  accountType       AccountType @default(FREE)
+  accountStatus     AccountStatus @default(ACTIVE)
+  trustScore        Int         @default(50)
+  trustComponents   Json?       // Trust score breakdown
+  onboardingComplete Boolean    @default(false)
+  isOnline          Boolean     @default(false)
+  lastSeen          DateTime    @default(now())
+  joinDate          DateTime    @default(now())
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // Professional account settings
+  professionalLayerEnabled Boolean @default(false)
+  professionalBio          String?
+  professionalLocation     String?
+
+  // Password and security
+  passwordHash      String?
+  refreshTokens     RefreshToken[]
+  
+  // Relationships
+  posts             Post[]
+  events            Event[]
+  comments          Comment[]
+  likes             Like[]
+  
+  // Friend connections
+  sentFriendRequests     FriendConnection[] @relation("FriendRequester")
+  receivedFriendRequests FriendConnection[] @relation("FriendReceiver")
+  
+  // Professional friend categorization
+  professionalCategories ProfessionalFriendCategory[] @relation("ProfessionalUser")
+  categorizedFriends     ProfessionalFriendCategory[] @relation("CategorizedFriend")
+  
+  // Social accounts
+  socialAccounts    SocialAccount[]
+  
+  // Flags and moderation
+  submittedFlags    Flag[] @relation("Flagger")
+  receivedFlags     Flag[] @relation("Flagged")
+  moderatorActions  ModeratorAction[]
+  
+  // Notifications
+  sentNotifications     Notification[] @relation("NotificationSender")
+  receivedNotifications Notification[] @relation("NotificationReceiver")
+  
+  // Event participation
+  eventRSVPs        EventRSVP[]
+  eventReviews      EventReview[]
+  
+  // Blocks
+  blockedUsers      Block[] @relation("Blocker")
+  blockedByUsers    Block[] @relation("Blocked")
+  
+  // Verification requests
+  sentVerificationRequests     VerificationRequest[] @relation("VerificationRequester")
+  receivedVerificationRequests VerificationRequest[] @relation("VerificationTarget")
+  
+  // Payment and subscriptions
+  subscriptions     Subscription[]
+  payments          Payment[]
+  
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  @@map("refresh_tokens")
+}
+
+model Post {
+  id               String     @id @default(cuid())
+  content          String
+  category         PostCategory @default(GENERAL)
+  location         String?
+  authorId         String
+  author           User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  reviewedPersons  String[]   // Names of people being reviewed
+  engagement       Json?      // { agrees, disagrees, communityValidation }
+  visibility       Visibility @default(PUBLIC)
+  isDeleted        Boolean    @default(false)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  
+  comments         Comment[]
+  likes            Like[]
+  flags            Flag[]
+  
+  @@map("posts")
+}
+
+model Event {
+  id                String        @id @default(cuid())
+  title             String
+  description       String
+  category          EventCategory @default(SOCIAL)
+  location          String
+  startDate         DateTime
+  endDate           DateTime?
+  maxAttendees      Int?
+  trustScoreRequired Int          @default(0)
+  visibility        Visibility    @default(PUBLIC)
+  organizerId       String
+  organizer         User          @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  isDeleted         Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  rsvps             EventRSVP[]
+  reviews           EventReview[]
+  likes             Like[]
+  
+  @@map("events")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parentId  String?  // For nested replies
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  likes     Like[]
+  
+  @@map("comments")
+}
+
+model Like {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String?
+  post      Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commentId String?
+  comment   Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  eventId   String?
+  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
+  @@unique([userId, eventId])
+  @@map("likes")
+}
+
+model FriendConnection {
+  id           String           @id @default(cuid())
+  requesterId  String
+  requester    User             @relation("FriendRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  receiverId   String
+  receiver     User             @relation("FriendReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  status       FriendStatus     @default(PENDING)
+  connectionSource ConnectionSource @default(DIRECT)
+  mutualFriendsCount Int           @default(0)
+  interactionFrequency String?     // high, medium, low
+  strengthScore Float            @default(0.5)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  
+  @@unique([requesterId, receiverId])
+  @@map("friend_connections")
+}
+
+model ProfessionalFriendCategory {
+  id                String                    @id @default(cuid())
+  professionalUserId String
+  professionalUser   User                     @relation("ProfessionalUser", fields: [professionalUserId], references: [id], onDelete: Cascade)
+  friendId          String
+  friend            User                     @relation("CategorizedFriend", fields: [friendId], references: [id], onDelete: Cascade)
+  categoryType      ProfessionalAccessType   @default(PROFESSIONAL_ONLY)
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  
+  @@unique([professionalUserId, friendId])
+  @@map("professional_friend_categories")
+}
+
+model SocialAccount {
+  id          String             @id @default(cuid())
+  platform    SocialPlatform
+  username    String
+  profileUrl  String?
+  isVerified  Boolean            @default(false)
+  verifiedAt  DateTime?
+  userId      String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  
+  flags       Flag[]
+  
+  @@unique([userId, platform])
+  @@map("social_accounts")
+}
+
+model Flag {
+  id                  String        @id @default(cuid())
+  category            FlagCategory
+  evidence            String
+  verificationInfo    String?
+  priority            FlagPriority  @default(MEDIUM)
+  status              FlagStatus    @default(PENDING)
+  flaggerId           String
+  flagger             User          @relation("Flagger", fields: [flaggerId], references: [id], onDelete: Cascade)
+  flaggedUserId       String?
+  flaggedUser         User?         @relation("Flagged", fields: [flaggedUserId], references: [id], onDelete: Cascade)
+  socialAccountId     String?
+  socialAccount       SocialAccount? @relation(fields: [socialAccountId], references: [id], onDelete: Cascade)
+  postId              String?
+  post                Post?         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  
+  moderatorActions    ModeratorAction[]
+  
+  @@map("flags")
+}
+
+model ModeratorAction {
+  id           String           @id @default(cuid())
+  flagId       String
+  flag         Flag             @relation(fields: [flagId], references: [id], onDelete: Cascade)
+  moderatorId  String
+  moderator    User             @relation(fields: [moderatorId], references: [id], onDelete: Cascade)
+  action       ModeratorActionType
+  explanation  String
+  createdAt    DateTime         @default(now())
+  
+  @@map("moderator_actions")
+}
+
+model Notification {
+  id         String             @id @default(cuid())
+  type       NotificationType
+  title      String
+  message    String
+  data       Json?              // Additional notification data
+  senderId   String?
+  sender     User?              @relation("NotificationSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver   User               @relation("NotificationReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  isRead     Boolean            @default(false)
+  readAt     DateTime?
+  createdAt  DateTime           @default(now())
+  
+  @@map("notifications")
+}
+
+model EventRSVP {
+  id        String      @id @default(cuid())
+  eventId   String
+  event     Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    RSVPStatus  @default(GOING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  
+  @@unique([eventId, userId])
+  @@map("event_rsvps")
+}
+
+model EventReview {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating    Int      // 1-5 stars
+  review    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([eventId, userId])
+  @@map("event_reviews")
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  blockerId String
+  blocker   User     @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blockedId String
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  reason    String?
+  createdAt DateTime @default(now())
+  
+  @@unique([blockerId, blockedId])
+  @@map("blocks")
+}
+
+model VerificationRequest {
+  id          String               @id @default(cuid())
+  requesterId String
+  requester   User                 @relation("VerificationRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  targetId    String
+  target      User                 @relation("VerificationTarget", fields: [targetId], references: [id], onDelete: Cascade)
+  status      VerificationStatus   @default(PENDING)
+  message     String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  
+  @@unique([requesterId, targetId])
+  @@map("verification_requests")
+}
+
+model Subscription {
+  id              String            @id @default(cuid())
+  userId          String
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan            AccountType
+  status          SubscriptionStatus @default(ACTIVE)
+  stripeCustomerId String?          @unique
+  stripeSubscriptionId String?      @unique
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean        @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  @@map("subscriptions")
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripePaymentId String        @unique
+  amount          Int           // in cents
+  currency        String        @default("usd")
+  status          PaymentStatus @default(PENDING)
+  description     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@map("payments")
+}
+
+// Enums
+enum AccountType {
+  FREE
+  PROFESSIONAL
+  VENUE
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+  PENDING_VERIFICATION
+}
+
+enum PostCategory {
+  PROFESSIONAL
+  MARKETPLACE
+  ACADEMIC
+  SOCIAL_EVENTS
+  DATING
+  CHILDCARE
+  GENERAL
+}
+
+enum EventCategory {
+  PROFESSIONAL
+  SOCIAL
+  EDUCATIONAL
+  SPORTS
+  CULTURAL
+  COMMUNITY
+  NETWORKING
+}
+
+enum Visibility {
+  PUBLIC
+  FRIENDS_ONLY
+  PROFESSIONAL_ONLY
+  PRIVATE
+}
+
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  BLOCKED
+}
+
+enum ConnectionSource {
+  DIRECT
+  MUTUAL_FRIENDS
+  LOCATION
+  INTERESTS
+  WORK
+  EVENT
+}
+
+enum ProfessionalAccessType {
+  PROFESSIONAL_ONLY
+  PERSONAL_ACCESS
+}
+
+enum SocialPlatform {
+  INSTAGRAM
+  TWITTER
+  LINKEDIN
+  TIKTOK
+  FACEBOOK
+  GITHUB
+  YOUTUBE
+  DISCORD
+}
+
+enum FlagCategory {
+  ACCOUNT_NOT_OWNED
+  FAKE_ACCOUNT
+  ACCOUNT_NOT_CONNECTED
+  MISLEADING_PROFESSIONAL
+  INAPPROPRIATE_CONTENT
+  SPAM
+  HARASSMENT
+  IMPERSONATION
+}
+
+enum FlagPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum FlagStatus {
+  PENDING
+  APPROVED
+  DENIED
+  NEED_MORE_INFO
+  RESOLVED
+}
+
+enum ModeratorActionType {
+  APPROVE_FLAG
+  DENY_FLAG
+  REQUEST_MORE_INFO
+  SUSPEND_USER
+  DELETE_CONTENT
+  WARNING_ISSUED
+}
+
+enum NotificationType {
+  FRIEND_REQUEST
+  FRIEND_ACCEPTED
+  EVENT_INVITATION
+  EVENT_REMINDER
+  POST_MENTION
+  COMMENT_REPLY
+  LIKE_RECEIVED
+  TRUST_MILESTONE
+  VERIFICATION_REQUEST
+  VERIFICATION_RESPONSE
+  FLAG_RESOLUTION
+  PAYMENT_SUCCESS
+  SUBSCRIPTION_EXPIRING
+}
+
+enum RSVPStatus {
+  GOING
+  MAYBE
+  NOT_GOING
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  DECLINED
+  EXPIRED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  UNPAID
+  INCOMPLETE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELED
+  REFUNDED
+}
