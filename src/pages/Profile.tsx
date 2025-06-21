@@ -397,29 +397,50 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen relative" style={{ backgroundColor: 'var(--color-background)' }}>
-      {/* Waffle Cone Background Pattern */}
+      {/* Realistic Waffle Cone Background Pattern */}
       <div 
-        className="fixed inset-0 opacity-10 pointer-events-none"
+        className="fixed inset-0 opacity-15 pointer-events-none"
         style={{
-          backgroundImage: `
-            linear-gradient(45deg, #d4a574 25%, transparent 25%), 
-            linear-gradient(-45deg, #d4a574 25%, transparent 25%), 
-            linear-gradient(45deg, transparent 75%, #d4a574 75%), 
-            linear-gradient(-45deg, transparent 75%, #d4a574 75%)
+          background: `
+            /* Base waffle cone gradient */
+            linear-gradient(135deg, #d4a574 0%, #c19653 50%, #b8874a 100%),
+            /* Diamond waffle pattern - main crosshatch */
+            linear-gradient(45deg, transparent 30%, rgba(160, 82, 45, 0.6) 30%, rgba(160, 82, 45, 0.6) 32%, transparent 32%, transparent 68%, rgba(160, 82, 45, 0.6) 68%, rgba(160, 82, 45, 0.6) 70%, transparent 70%),
+            linear-gradient(-45deg, transparent 30%, rgba(160, 82, 45, 0.6) 30%, rgba(160, 82, 45, 0.6) 32%, transparent 32%, transparent 68%, rgba(160, 82, 45, 0.6) 68%, rgba(160, 82, 45, 0.6) 70%, transparent 70%)
           `,
-          backgroundSize: '20px 20px',
-          backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
+          backgroundSize: '100% 100%, 18px 18px, 18px 18px',
+          backgroundPosition: '0 0, 0 0, 0 0'
         }}
       />
       
-      {/* Additional waffle texture overlay */}
+      {/* Deep waffle indentations */}
       <div 
-        className="fixed inset-0 opacity-5 pointer-events-none"
+        className="fixed inset-0 opacity-12 pointer-events-none"
         style={{
-          backgroundImage: `
-            radial-gradient(circle at 50% 50%, #8B4513 1px, transparent 1px)
+          background: `
+            repeating-linear-gradient(45deg, rgba(139, 69, 19, 0.4) 0px, rgba(139, 69, 19, 0.4) 1px, transparent 1px, transparent 9px),
+            repeating-linear-gradient(-45deg, rgba(139, 69, 19, 0.4) 0px, rgba(139, 69, 19, 0.4) 1px, transparent 1px, transparent 9px)
           `,
-          backgroundSize: '8px 8px'
+          backgroundSize: '18px 18px, 18px 18px'
+        }}
+      />
+
+      {/* Waffle texture and golden highlights */}
+      <div 
+        className="fixed inset-0 opacity-8 pointer-events-none"
+        style={{
+          background: `
+            /* Small waffle holes/dimples */
+            radial-gradient(circle at 25% 25%, rgba(139, 69, 19, 0.3) 1px, transparent 1px),
+            radial-gradient(circle at 75% 75%, rgba(139, 69, 19, 0.3) 1px, transparent 1px),
+            /* Golden crispy highlights */
+            linear-gradient(135deg, transparent 40%, rgba(218, 165, 32, 0.2) 50%, transparent 60%),
+            /* Subtle burnt edges */
+            radial-gradient(ellipse at 20% 80%, rgba(101, 67, 33, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 20%, rgba(101, 67, 33, 0.15) 0%, transparent 50%)
+          `,
+          backgroundSize: '9px 9px, 9px 9px, 100% 100%, 120px 120px, 120px 120px',
+          backgroundPosition: '0 0, 4.5px 4.5px, 0 0, 0 0, 0 0'
         }}
       />
 
