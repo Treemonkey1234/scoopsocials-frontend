@@ -26,6 +26,8 @@ const corsOptions = {
     const allowedOrigins = [
       env.CORS_ORIGIN,           // https://scoopsocials-frontend.vercel.app
       env.FRONTEND_URL,          // https://scoopsocials-frontend.vercel.app
+      'https://scoopsocials-frontend-cbhi.vercel.app', // Current deployment URL
+      'https://scoopsocials-frontend.vercel.app',      // Main deployment URL
       'http://localhost:3000',   // Local development
       'http://localhost:3001',   // Local backend
       'http://localhost:8080',   // Local test server
@@ -77,7 +79,7 @@ const corsOptions = {
 const io = new Server(httpServer, {
   cors: {
     origin: function (origin, callback) {
-      const allowedOrigins = [env.CORS_ORIGIN, env.FRONTEND_URL, 'http://localhost:3000'].filter(Boolean);
+      const allowedOrigins = [env.CORS_ORIGIN, env.FRONTEND_URL, 'https://scoopsocials-frontend-cbhi.vercel.app', 'https://scoopsocials-frontend.vercel.app', 'http://localhost:3000'].filter(Boolean);
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -104,6 +106,8 @@ app.use((req, res, next) => {
   const allowedOrigins = [
     env.CORS_ORIGIN,
     env.FRONTEND_URL,
+    'https://scoopsocials-frontend-cbhi.vercel.app',
+    'https://scoopsocials-frontend.vercel.app',
     'http://localhost:3000',
     'http://localhost:3001'
   ].filter(Boolean);
