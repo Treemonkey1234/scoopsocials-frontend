@@ -396,10 +396,10 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
       <div className="bg-primary text-white p-lg shadow-lg">
         <div className="flex items-center justify-between mb-md">
-            <h1 className="text-5xl font-extrabold">Profile</h1>
+            <h1 className="text-5xl font-extrabold text-white">Profile</h1>
             <PlusButton onAction={handlePlusAction} />
         </div>
         <div className="flex justify-end">
@@ -419,16 +419,16 @@ export default function Profile() {
       <div className="p-lg -mt-lg">
         <div className="max-w-2xl mx-auto space-y-xl">
           {/* Profile Header */}
-          <Card className="p-xl text-center relative overflow-hidden bg-primary text-white">
-            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+          <Card className="p-xl text-center relative overflow-hidden bg-white">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full -mr-10 -mt-10"></div>
             <div className="relative z-10">
-                <div className="w-24 h-24 mx-auto rounded-full border-4 border-white/30 shadow-lg overflow-hidden">
+                <div className="w-24 h-24 mx-auto rounded-full border-4 border-primary/30 shadow-lg overflow-hidden">
                     <img src={userData.profilePhoto} alt={userData.name} />
                 </div>
-                <h2 className="text-h2 font-bold mt-xl mb-sm">{userData.name}</h2>
-                <p className="text-white/80 mb-md">{userData.username}</p>
+                <h2 className="text-h2 font-bold mt-xl mb-sm text-primary">{userData.name}</h2>
+                <p className="text-secondary mb-md">{userData.username}</p>
                 <div className="flex items-center justify-center space-x-sm">
-                    <div className="px-md py-sm bg-white/20 rounded-full text-sm font-medium backdrop-blur-sm">
+                    <div className="px-md py-sm bg-primary/20 rounded-full text-sm font-medium backdrop-blur-sm text-primary">
                         Trust Score: {userData.trustScore}
                     </div>
                  </div>
@@ -436,12 +436,12 @@ export default function Profile() {
           </Card>
 
           {/* Bio Card */}
-          <Card className="p-xl text-center">
+          <Card className="p-xl text-center bg-white">
             <p className="text-body1 text-primary">{userData.bio}</p>
           </Card>
 
           {/* Flavors Section */}
-          <div>
+          <div className="bg-white rounded-lg p-lg">
             <div className="flex justify-between items-center mb-xl">
                 <h3 className="text-h3 font-bold text-primary text-center">Flavors</h3>
                 <Button variant="outline" size="small" onClick={handleViewFlavors}>View</Button>
@@ -457,7 +457,7 @@ export default function Profile() {
           </div>
 
           {/* Social Connections */}
-          <Card className="p-xl">
+          <Card className="p-xl bg-white">
             <div className="flex justify-between items-center mb-xl">
                 <h3 className="text-h3 font-bold text-primary">Socials</h3>
                 <Button variant="outline" size="small" onClick={handleViewAllSocials}>View all</Button>
@@ -486,41 +486,43 @@ export default function Profile() {
           </Card>
 
           {/* Tabs */}
-          <div className="border-b border-gray-200">
-            <div className="flex justify-around">
-              {tabList.map(tab => (
-                <button
-                  key={tab}
-                  className={`w-full py-lg text-center font-medium ${activeTab === tab ? 'text-primary border-b-2 border-primary' : 'text-secondary'}`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="py-xl">
-            {activeTab === "Posts" && (
-              <div className="space-y-md">
-                {mockPosts.map(post => (
-                  <PostCard 
-                    key={post.id} 
-                    post={{...post, author: post.author}}
-                    onComment={handleComment}
-                    onShare={handleShare}
-                    onReaction={handleReaction}
-                    onVote={handleVote}
-                    userVote={votes[post.id.toString()] || 0}
-                  />
+          <div className="bg-white rounded-lg">
+            <div className="border-b border-gray-200">
+              <div className="flex justify-around">
+                {tabList.map(tab => (
+                  <button
+                    key={tab}
+                    className={`w-full py-lg text-center font-medium ${activeTab === tab ? 'text-primary border-b-2 border-primary' : 'text-secondary'}`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab}
+                  </button>
                 ))}
               </div>
-            )}
-            {activeTab === "Groups" && (
-              <p className="text-center text-secondary">Groups content goes here.</p>
-            )}
-            {activeTab === "Likes" && (
-              <p className="text-center text-secondary">Likes content goes here.</p>
-            )}
+            </div>
+            <div className="py-xl px-lg">
+              {activeTab === "Posts" && (
+                <div className="space-y-md">
+                  {mockPosts.map(post => (
+                    <PostCard 
+                      key={post.id} 
+                      post={{...post, author: post.author}}
+                      onComment={handleComment}
+                      onShare={handleShare}
+                      onReaction={handleReaction}
+                      onVote={handleVote}
+                      userVote={votes[post.id.toString()] || 0}
+                    />
+                  ))}
+                </div>
+              )}
+              {activeTab === "Groups" && (
+                <p className="text-center text-secondary">Groups content goes here.</p>
+              )}
+              {activeTab === "Likes" && (
+                <p className="text-center text-secondary">Likes content goes here.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

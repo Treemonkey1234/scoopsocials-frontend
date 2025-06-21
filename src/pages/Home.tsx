@@ -152,11 +152,11 @@ const Home: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background">
-            {/* Header */}
+        <div className="min-h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
+            {/* Header - Updated to match other pages */}
             <div className="bg-primary text-white p-lg shadow-lg sticky top-0 z-10">
                 <div className="max-w-2xl mx-auto flex items-center justify-between">
-                    <h1 className="text-h1 font-bold" style={{ textAlign: 'left' }}>Home</h1>
+                    <h1 className="text-h1 font-bold text-white">Home</h1>
                     <PlusButton onAction={handlePlusAction} />
                 </div>
             </div>
@@ -167,17 +167,17 @@ const Home: React.FC = () => {
                 onSubmit={handleCreatePost}
             />
 
-            {/* Main Content */}
+            {/* Main Content - Updated with white background for content cards */}
             <main className="max-w-2xl mx-auto p-lg">
                 <div className="space-y-xl">
                     {/* --- Welcome Card --- */}
-                    <Card className="p-xl text-center relative overflow-hidden bg-primary-light mb-lg">
+                    <Card className="p-xl text-center relative overflow-hidden bg-white mb-lg">
                         <h2 className="text-h2 font-bold mb-sm text-primary">Welcome back, {currentUser ? currentUser.name : 'Guest'}!</h2>
                         <p className="text-secondary-text">Here's what's happening in your network.</p>
                     </Card>
 
                     {/* --- Post Feed --- */}
-                    <div>
+                    <div className="bg-white rounded-lg p-lg">
                         <h3 className="text-h3 font-bold text-primary mb-md">Feed</h3>
                         {loading && <p>Loading feed...</p>}
                         {error && <p className="text-red-500">{error}</p>}

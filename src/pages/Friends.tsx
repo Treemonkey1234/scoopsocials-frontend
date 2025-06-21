@@ -204,21 +204,11 @@ export default function Friends() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-white border-b">
-        <h1 className="text-xl font-bold">Friends</h1>
-        <div className="flex items-center space-x-2">
-          <button 
-            onClick={() => navigate('/groups')}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-            title="Groups"
-          >
-            <span className="sr-only">Groups</span>
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-          </button>
+      <div className="bg-primary text-white p-lg shadow-lg sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <h1 className="text-h1 font-bold text-white">Friends</h1>
           <PlusButton onAction={handlePlusAction} />
         </div>
       </div>
@@ -261,8 +251,8 @@ export default function Friends() {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Main Content */}
+      <div className="max-w-2xl mx-auto p-lg flex-1">
         {activeCategory === "Friends" && (
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">

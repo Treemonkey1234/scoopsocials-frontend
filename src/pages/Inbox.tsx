@@ -325,43 +325,17 @@ export default function Inbox() {
   const unreadCount = inboxItems.filter(item => !item.isRead).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
-      {/* Enhanced Header with Solid Blue */}
-      <div className="bg-primary text-white p-lg shadow-lg">
-        <div className="flex items-center justify-between mb-md">
-            <div className="flex items-center">
-            <h1 className="text-5xl font-extrabold">Inbox</h1>
-              {unreadCount > 0 && (
-              <span className="bg-red-500 text-white text-sm font-bold rounded-full w-6 h-6 flex items-center justify-center ml-2 -translate-y-2">
-                  {unreadCount}
-                </span>
-              )}
-            </div>
-              <PlusButton onAction={handlePlusAction} />
-      </div>
-
-        {/* Category Tabs */}
-        <div className="flex space-x-6 overflow-x-auto items-center">
-          {inboxCategories.map(category => (
-            <div
-                key={category}
-              className="cursor-pointer py-2"
-                onClick={() => setActiveCategory(category)}
-              >
-              {activeCategory === category ? (
-                <span className="bg-white text-primary text-md font-bold rounded-full px-4 py-2">
-                {category}
-                </span>
-              ) : (
-                <span className="text-blue-200 text-md font-normal">{category}</span>
-              )}
-          </div>
-          ))}
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
+      {/* Header */}
+      <div className="bg-primary text-white p-lg shadow-lg sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <h1 className="text-h1 font-bold text-white">Inbox</h1>
+          <PlusButton onAction={handlePlusAction} />
         </div>
       </div>
 
-      {/* Content Area */}
-      <div className="p-lg">
+      {/* Main Content */}
+      <div className="max-w-2xl mx-auto p-lg">
         <div className="max-w-2xl mx-auto space-y-md">
           {filteredItems.map(item => (
             <Card 

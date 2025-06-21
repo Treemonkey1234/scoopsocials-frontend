@@ -231,23 +231,34 @@ export default function Search() {
   const tabOptions = ["Posts", "Events", "People", "Topics"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
-      {/* Enhanced Header with Solid Blue */}
-      <div className="bg-primary text-white p-lg shadow-lg">
-        <div className="flex items-center justify-between mb-md">
-            <h1 className="text-5xl font-extrabold">Search</h1>
-            <PlusButton onAction={handlePlusAction} />
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
+      {/* Header */}
+      <div className="bg-primary text-white p-lg shadow-lg sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <h1 className="text-h1 font-bold text-white">Search</h1>
+          <PlusButton onAction={handlePlusAction} />
         </div>
-        <div className="relative">
-          <input
-            type="text"
-              placeholder="Search for anything..."
-            value={searchQuery}
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-2xl mx-auto p-lg">
+        {/* Search Bar */}
+        <div className="bg-white rounded-lg p-lg mb-lg">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search users, events, and posts..."
+              value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/20 text-white placeholder-blue-200 rounded-lg px-md py-sm focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full p-lg pl-12 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
+            <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
         </div>
-      {/* Category Tabs */}
+
+        {/* Category Tabs */}
         <div className="flex space-x-6 overflow-x-auto items-center mt-md">
           {tabOptions.map(tab => (
             <div
@@ -265,27 +276,24 @@ export default function Search() {
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Content Area */}
-      <div className="p-lg">
-          {hasQuery ? (
-              <div className="space-y-md max-w-2xl mx-auto">
-                  {activeTab === 'Posts' && filteredPosts.map(renderPostResult)}
-                  {activeTab === 'Events' && filteredEvents.map(renderEventResult)}
-                  {activeTab === 'People' && filteredPeople.map(renderPersonResult)}
-                  {activeTab === 'Topics' && trendingTopics.map(topic => (
-                      <Card key={topic.id} className="p-md">
-                          <span className="text-lg mr-sm">{topic.icon}</span>
-                          <span className="font-bold text-primary">{topic.topic}</span>
-                      </Card>
-                ))}
-              </div>
-        ) : (
-            <div className="text-center text-secondary py-xl">
-                <p>Search for people, events, posts, and more.</p>
-          </div>
-        )}
+        {hasQuery ? (
+            <div className="space-y-md max-w-2xl mx-auto">
+                {activeTab === 'Posts' && filteredPosts.map(renderPostResult)}
+                {activeTab === 'Events' && filteredEvents.map(renderEventResult)}
+                {activeTab === 'People' && filteredPeople.map(renderPersonResult)}
+                {activeTab === 'Topics' && trendingTopics.map(topic => (
+                    <Card key={topic.id} className="p-md">
+                        <span className="text-lg mr-sm">{topic.icon}</span>
+                        <span className="font-bold text-primary">{topic.topic}</span>
+                    </Card>
+              ))}
+            </div>
+      ) : (
+          <div className="text-center text-secondary py-xl">
+              <p>Search for people, events, posts, and more.</p>
+        </div>
+      )}
       </div>
     </div>
   );

@@ -742,55 +742,17 @@ export default function Events() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
-      {/* Enhanced Header with Solid Blue */}
-      <div className="bg-primary text-white p-lg shadow-lg">
-        <div className="flex items-center justify-between mb-md">
-          <h1 className="text-5xl font-extrabold">Events</h1>
-          <div className="flex items-center space-x-4">
-            {/* Debug panel - only show in development */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="flex items-center space-x-2 bg-blue-800 px-3 py-1 rounded-lg">
-                <button
-                  onClick={handleShowMockDataInfo}
-                  className="text-xs bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded transition-colors"
-                >
-                  📊 Mock Info
-                </button>
-                <button
-                  onClick={handleClearMockData}
-                  className="text-xs bg-red-600 hover:bg-red-700 px-2 py-1 rounded transition-colors"
-                >
-                  🧹 Clear Mock
-                </button>
-              </div>
-            )}
-            <PlusButton onAction={handlePlusAction} />
-          </div>
-        </div>
-
-        {/* Category Tabs */}
-        <div className="flex space-x-6 overflow-x-auto items-center">
-        {tabOptions.map(tab => (
-            <div
-            key={tab}
-              className="cursor-pointer py-2"
-            onClick={() => setActiveTab(tab)}
-          >
-              {activeTab === tab ? (
-                <span className="bg-white text-primary text-md font-bold rounded-full px-4 py-2">
-            {tab}
-                </span>
-              ) : (
-                <span className="text-blue-200 text-md font-normal">{tab}</span>
-              )}
-            </div>
-        ))}
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
+      {/* Header */}
+      <div className="bg-primary text-white p-lg shadow-lg sticky top-0 z-30">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <h1 className="text-h1 font-bold text-white">Events</h1>
+          <PlusButton onAction={handlePlusAction} />
         </div>
       </div>
 
-      {/* Content Area */}
-      <div className="p-lg">
+      {/* Main Content */}
+      <div className="max-w-2xl mx-auto p-lg">
         {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center py-12">
